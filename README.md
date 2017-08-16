@@ -1,41 +1,16 @@
 docker-eelly
 ==============
 
-Then, run:
+修改docker-eelly/docker-compose.yml 文件的**volumes**路径
 
-```bash
-$ docker-compose up
-```
+这里预设值了 api.eelly.dev 站点,把你的代码 git 到这个目录.
 
-You are done, you can visit your  application on the following URL: `http://api.eelly.dev`
+cd docker-eelly/
 
-_Note :_ you can rebuild all Docker images by running:
-
-```bash
+执行: 
 $ docker-compose build
-```
+$ docker-compose up
 
-# How it works?
+修改你的 hosts 指向,就可以访问你的站点了.
 
-Here are the `docker-compose` built images:
 
-* `db`: This is the MySQL database container (can be changed to postgresql or whatever in `docker-compose.yml` file),
-* `php`: This is the PHP-FPM container including the application volume mounted on,
-* `nginx`: This is the Nginx webserver container in which php volumes are mounted too,
-* `elk`: This is a ELK stack container which uses Logstash to collect logs, send them into Elasticsearch and visualize them with Kibana.
-
-This results in the following running containers:
-
-```bash
-> $ docker-compose ps
-        Name                      Command               State              Ports
-        -------------------------------------------------------------------------------------------
-        docker_db_1            /entrypoint.sh mysqld            Up      0.0.0.0:3306->3306/tcp
-        docker_elk_1           /usr/bin/supervisord -n -c ...   Up      0.0.0.0:81->80/tcp
-        docker_nginx_1         nginx                            Up      443/tcp, 0.0.0.0:80->80/tcp
-        docker_php_1           php5-fpm -F                      Up      9000/tcp
-```
-
-# Code license
-
-You are free to use the code in this repository under the terms of the 0-clause BSD license. LICENSE contains a copy of this license.
