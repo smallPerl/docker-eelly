@@ -13,13 +13,16 @@ services:
     php5:
         build: ./php5-fpm
         volumes:
-            - /Users/haikun/site:/var/www
+            - /Users/haikun/site:/data/www
+            - /Users/haikun/docker/docker-eelly/logs:/data/logs
         links:
             - db
     php7:
         build: ./php7-fpm
         volumes:
-            - /Users/haikun/site:/var/www
+            - /Users/haikun/site:/data/www
+            - /Users/haikun/docker/docker-eelly/logs:/data/logs
+            - /Users/haikun/docker/docker-eelly/html:/data/www/html
         links:
             - db
     nginx:
@@ -33,8 +36,6 @@ services:
         volumes_from:
             - php5
             - php7
-        volumes:
-            - /Users/haikun/docker/docker-eelly/logs/nginx:/var/log/nginx
     redis:
         image: redis
     redisCommander:
@@ -71,22 +72,11 @@ services:
             - "8983:8983"
             #http://api.eelly.dev:8983/solr/#/
         volumes:
-            - /Users/haikun/docker/docker-eelly/linux/solr:/opt/solr/server/solr/mycores
+            - /Users/haikun/docker/docker-eelly/solr:/opt/solr/server/solr/mycores
         entrypoint:
             - docker-entrypoint.sh
             - solr-precreate
             - mycore
-    elk:
-        image: willdurand/elk
-        ports:
-            - "81:80"
-        volumes:
-            - /Users/haikun/docker/docker-eelly/linux/elk/logstash:/etc/logstash
-            - /Users/haikun/docker/docker-eelly/linux/elk/logstash/patterns:/opt/logstash/patterns
-        volumes_from:
-            - php5
-            - php7
-            - nginx
     elasticsearch:
         image: elasticsearch
         command: elasticsearch
