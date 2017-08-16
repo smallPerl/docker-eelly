@@ -1,0 +1,98 @@
+version: '2'
+services:
+    db:
+        build: ./mysql
+        #image: mysql
+        ports:
+            - "3306:3306"
+        #new PDO("mysql:host=db;dbname=oauth;charset=utf8","root","123456");
+    adminer:
+        image: adminer
+        ports:
+            - 8080:8080
+    php5:
+        build: ./php5-fpm
+        volumes:
+            - /Users/haikun/site:/var/www
+        links:
+            - db
+    php7:
+        build: ./php7-fpm
+        volumes:
+            - /Users/haikun/site:/var/www
+        links:
+            - db
+    nginx:
+        build: ./nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        links:
+            - php5
+            - php7
+        volumes_from:
+            - php5
+            - php7
+        volumes:
+            - /Users/haikun/docker/docker-eelly/logs/nginx:/var/log/nginx
+    redis:
+        image: redis
+    redisCommander:
+        image: tenstartups/redis-commander
+        command: --redis-host redis
+        links:
+          - redis:redis
+        ports:
+          - "8081:8081"
+    memcached:
+        image: memcached:latest
+        expose:
+            - 11211
+        ports:
+            - "11211:11211"
+    mongodb:
+        image: 'tutum/mongodb'
+        ports:
+            - "27017:27017"
+        environment:
+            - AUTH=no
+        #$manager = new MongoDB\Driver\Manager("mongodb://mongodb:27017");
+        
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: rabbitmq
+        ports:
+            - 5672:5672
+            - "15672:15672"
+            #http://api.eelly.dev:15672/#/
+    solr:
+        image: solr
+        ports:
+            - "8983:8983"
+            #http://api.eelly.dev:8983/solr/#/
+        volumes:
+            - /Users/haikun/docker/docker-eelly/linux/solr:/opt/solr/server/solr/mycores
+        entrypoint:
+            - docker-entrypoint.sh
+            - solr-precreate
+            - mycore
+    elk:
+        image: willdurand/elk
+        ports:
+            - "81:80"
+        volumes:
+            - /Users/haikun/docker/docker-eelly/linux/elk/logstash:/etc/logstash
+            - /Users/haikun/docker/docker-eelly/linux/elk/logstash/patterns:/opt/logstash/patterns
+        volumes_from:
+            - php5
+            - php7
+            - nginx
+    elasticsearch:
+        image: elasticsearch
+        command: elasticsearch
+        ports:
+            - "9200:9200"    
+            - "9300:9300"
+            #9300端口： ES节点之间通讯使用
+            #9200端口： ES节点 和 外部 通讯使用
+   
