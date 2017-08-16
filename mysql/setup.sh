@@ -1,9 +1,16 @@
 #!/bin/bash
 set -e
 
+echo '0.检查  mysql....'
+
+echo `service mysql status`
+service mysql stop
+
 echo `service mysql status`
 
-echo '1.启动mysql....'
+echo '..................检查 mysql  结束....'
+
+echo '1.开始启动mysql....'
 
 #启动mysql
 service mysql start
