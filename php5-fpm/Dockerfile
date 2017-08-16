@@ -11,9 +11,6 @@ RUN set -xe && \
         tar xzf v${PHALCON_VERSION}.tar.gz && cd cphalcon-${PHALCON_VERSION}/build && sh install && \
         docker-php-ext-enable phalcon
 
-# add pdo_mysql extension
-RUN docker-php-ext-install pdo_mysql
-
 # add memcached extension
 ENV MEMCACHED_DEPS zlib-dev libmemcached-dev cyrus-sasl-dev
 RUN set -xe && \
