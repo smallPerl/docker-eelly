@@ -1,6 +1,6 @@
 FROM php:7.1.7-fpm-alpine
 
-WORKDIR /var/www
+WORKDIR /data/www
 
 ENV PHALCON_VERSION=3.2.1
 
@@ -47,8 +47,7 @@ RUN apk upgrade --update && apk add \
     && rm -rf /var/cache/apk/* 
 
 RUN curl -sS https://getcomposer.org/installer | php \
-    && mv composer.phar /usr/local/bin/ \
-    && ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
+    && mv composer.phar /usr/local/bin/composer
 
 RUN apk upgrade --update && apk add \
   git \
@@ -80,4 +79,4 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git cmake openssl-dev 
 	&& apk del .build-deps && rm -rf /tmp/*
 
 ADD php.ini /usr/local/etc/php/
-
+RUN chmod 777 /data/www/ -R

@@ -21,7 +21,7 @@ RUN set -xe && \
 
 # add redis extension
 RUN set -xe && \
-    pecl install redis-3.1.3 && \
+    pecl install redis-3.1.3 &&\
     docker-php-ext-enable redis
 
 # add mongodb extension
