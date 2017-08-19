@@ -10,7 +10,21 @@ cd docker-eelly/
 执行: 
 $ docker-compose build
 $ docker-compose up
-
 修改你的 hosts 指向,就可以访问你的站点了.
 
+---
 
+-关于导入数据库:
+从本地到处数据库结构,检查有没有新增库的 SQL, 如果没有新增改语句:
+
+DROP DATABASE IF EXISTS `oauth`;
+CREATE DATABASE `oauth`;
+USE oauth;
+
+具体表结构语句
+具体数据语句
+
+-关于新增虚拟机
+在 nginx/sites-available 新增站点配置文件,
+
+-错误日志在 logs 文件夹
