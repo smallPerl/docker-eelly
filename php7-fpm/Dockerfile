@@ -12,7 +12,7 @@ RUN set -xe && \
         docker-php-ext-enable phalcon
 
 # add pdo_mysql extension
-RUN docker-php-ext-install pdo_mysql mysqli
+RUN docker-php-ext-install pdo_mysql mysqli 
 
 # add mongodb extension
 RUN set -xe && \
@@ -80,3 +80,4 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git cmake openssl-dev 
 
 ADD php.ini /usr/local/etc/php/
 RUN chmod 777 /data/www/ -R
+RUN docker-php-ext-install bcmath
