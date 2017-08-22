@@ -17,6 +17,9 @@ RUN chmod 777 /var/lib/nginx -R
 COPY api.crt /etc/nginx/
 COPY api.key /etc/nginx/
 
+COPY ssl.crt /etc/nginx/
+COPY ssl.key /etc/nginx/
+
 CMD ["nginx"]
 
 EXPOSE 80

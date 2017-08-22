@@ -85,4 +85,8 @@ services:
             - "9300:9300"
             #9300端口： ES节点之间通讯使用
             #9200端口： ES节点 和 外部 通讯使用
-   
+    node:
+        build: ./nodejs
+        volumes:
+             - /Users/haikun/docker/docker-eelly/html:/data/www/html
+             - /Users/haikun/site:/data/www
