@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
     db:
         build: ./mysql
@@ -6,10 +6,14 @@ services:
         ports:
             - "3306:3306"
         #new PDO("mysql:host=db;dbname=oauth;charset=utf8","root","123456");
+        networks:
+            app-network:
     adminer:
         image: adminer
         ports:
             - 8080:8080
+        networks:
+            app-network:
     php5:
         build: ./php5-fpm
         volumes:
@@ -17,6 +21,8 @@ services:
             - /Users/haikun/docker/docker-eelly/logs:/data/logs
         links:
             - db
+        networks:
+            app-network:
     php7:
         build: ./php7-fpm
         volumes:
@@ -25,6 +31,8 @@ services:
             - /Users/haikun/docker/docker-eelly/html:/data/www/html
         links:
             - db
+        networks:
+            app-network:
     nginx:
         build: ./nginx
         ports:
@@ -33,11 +41,20 @@ services:
         links:
             - php5
             - php7
-        volumes_from:
-            - php5
-            - php7
+        volumes:
+            - /Users/haikun/site:/data/www
+            - /Users/haikun/docker/docker-eelly/logs:/data/logs
+            - /Users/haikun/docker/docker-eelly/html:/data/www/html
+        networks:
+            app-network:
+                aliases:
+                    - api.eelly.dev
+                    - www.eelly.dev
+                    - m.eelly.dev
     redis:
         image: redis
+        networks:
+            app-network:
     redisCommander:
         image: tenstartups/redis-commander
         command: --redis-host redis
@@ -45,12 +62,16 @@ services:
           - redis:redis
         ports:
           - "8081:8081"
+        networks:
+            app-network:
     memcached:
         image: memcached:latest
         expose:
             - 11211
         ports:
             - "11211:11211"
+        networks:
+            app-network:
     mongodb:
         image: 'tutum/mongodb'
         ports:
@@ -58,7 +79,8 @@ services:
         environment:
             - AUTH=no
         #$manager = new MongoDB\Driver\Manager("mongodb://mongodb:27017");
-        
+        networks:
+            app-network:
     rabbitmq:
         image: rabbitmq:3-management
         container_name: rabbitmq
@@ -66,27 +88,14 @@ services:
             - 5672:5672
             - "15672:15672"
             #http://api.eelly.dev:15672/#/
-    solr:
-        image: solr
-        ports:
-            - "8983:8983"
-            #http://api.eelly.dev:8983/solr/#/
-        volumes:
-            - /Users/haikun/docker/docker-eelly/solr:/opt/solr/server/solr/mycores
-        entrypoint:
-            - docker-entrypoint.sh
-            - solr-precreate
-            - mycore
-    elasticsearch:
-        image: elasticsearch
-        command: elasticsearch
-        ports:
-            - "9200:9200"    
-            - "9300:9300"
-            #9300端口： ES节点之间通讯使用
-            #9200端口： ES节点 和 外部 通讯使用
+        networks:
+            app-network:
     node:
         build: ./nodejs
         volumes:
              - /Users/haikun/docker/docker-eelly/html:/data/www/html
              - /Users/haikun/site:/data/www
+        networks:
+            app-network:
+networks:
+    app-network:
