@@ -19,7 +19,7 @@ services:
     php5:
         build: ./php5-fpm
         volumes:
-            - /Users/gary/web:/data/www
+            - /Users/gary/site:/data/www
             - /Users/gary/docker/docker-eelly/logs:/data/logs
         links:
             - db
@@ -28,7 +28,7 @@ services:
     php7:
         build: ./php7-fpm
         volumes:
-            - /Users/gary/web:/data/www
+            - /Users/gary/site:/data/www
             - /Users/gary/docker/docker-eelly/logs:/data/logs
             - /Users/gary/docker/docker-eelly/html:/data/www/html
         links:
@@ -44,7 +44,7 @@ services:
             - php5
             - php7
         volumes:
-            - /Users/gary/web:/data/www
+            - /Users/gary/site:/data/www
             - /Users/gary/docker/docker-eelly/logs:/data/logs
             - /Users/gary/docker/docker-eelly/html:/data/www/html
         networks:
@@ -96,7 +96,7 @@ services:
         build: ./nodejs
         volumes:
              - /Users/gary/docker/docker-eelly/html:/data/www/html
-             - /Users/gary/web:/data/www
+             - /Users/gary/site:/data/www
         networks:
             app-network:
 networks:
