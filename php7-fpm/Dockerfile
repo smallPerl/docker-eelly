@@ -2,7 +2,7 @@ FROM php:7.1.7-fpm-alpine
 
 WORKDIR /data/www
 
-ENV PHALCON_VERSION=3.2.1
+ENV PHALCON_VERSION=3.2.2
 
 # compile phalcon
 RUN set -xe && \
@@ -80,4 +80,5 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git cmake openssl-dev 
 
 ADD php.ini /usr/local/etc/php/
 RUN chmod 777 /data/www/ -R
-RUN docker-php-ext-install bcmath
+RUN docker-php-ext-install bcmath 
+RUN pecl install igbinary && docker-php-ext-enable igbinary
