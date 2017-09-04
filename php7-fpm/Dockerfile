@@ -2,7 +2,7 @@ FROM php:7.1.7-fpm-alpine
 
 WORKDIR /data/www
 
-ENV PHALCON_VERSION=3.2.1
+ENV PHALCON_VERSION=3.2.2
 
 # compile phalcon
 RUN set -xe && \
@@ -80,4 +80,27 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git cmake openssl-dev 
 
 ADD php.ini /usr/local/etc/php/
 RUN chmod 777 /data/www/ -R
-RUN docker-php-ext-install bcmath
+RUN pecl install igbinary && docker-php-ext-enable igbinary
+
+# GD extension
+RUN apk add --no-cache --virtual .build-deps \
+        libxml2-dev \
+        freetype-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
+        libmcrypt-dev \
+        libxml2
+
+RUN set -ex \
+    && docker-php-ext-configure gd \
+        --with-freetype-dir=/usr/include/freetype2/freetype \
+        --with-jpeg-dir=/usr/include \
+        --with-png-dir=/usr/include \
+    && docker-php-ext-install soap gd bcmath zip opcache iconv mcrypt pdo pcntl sockets shmop xmlrpc \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/*
+
+
+
+
+
