@@ -84,3 +84,5 @@ RUN set -ex \
     && docker-php-ext-install soap gd bcmath zip opcache pdo_mysql mysqli iconv mcrypt pdo pcntl sockets shmop xmlrpc \
     && rm -rf /var/cache/apk/* \
     && rm -rf /tmp/*
+
+
