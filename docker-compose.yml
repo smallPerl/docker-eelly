@@ -53,6 +53,8 @@ services:
                     - m.eelly.dev
     redis:
         image: redis
+        ports:
+          - "6379:6379"
         networks:
             app-network:
     redisCommander:
