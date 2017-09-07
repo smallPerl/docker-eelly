@@ -53,6 +53,8 @@ services:
                     - api.eelly.dev
                     - www.eelly.dev
                     - m.eelly.dev
+                    - static.eelly.dev
+                    - manage.eelly.dev
     redis:
         image: redis
         ports:
@@ -103,3 +105,5 @@ services:
             app-network:
 networks:
     app-network:
+#    app-outwork:
+#      driver: host
