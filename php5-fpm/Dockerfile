@@ -1,6 +1,6 @@
 FROM php:5.6.31-fpm-alpine
 
-WORKDIR /var/www
+WORKDIR /data/www
 
 ENV PHALCON_VERSION=3.2.1
 
@@ -13,6 +13,7 @@ RUN set -xe && \
 
 RUN pecl install igbinary && docker-php-ext-enable igbinary
 
+# add memcached extension
 RUN apk update && apk add libmemcached-dev zlib-dev libgsasl-dev cyrus-sasl-dev \
     && cd /tmp \
     && pecl download memcached-2.2.0 \
@@ -37,7 +38,7 @@ RUN set -xe && \
     docker-php-ext-enable mongodb
 
 ADD php.ini /usr/local/etc/php/
-
+RUN chmod 777 /data/www/ -R
 
 ENV RABBITMQ_VERSION v0.8.0
 ENV PHP_AMQP_VERSION v1.9.0
