@@ -105,5 +105,3 @@ services:
             app-network:
 networks:
     app-network:
-#    app-outwork:
-#      driver: host
