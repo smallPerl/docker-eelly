@@ -1,6 +1,6 @@
 FROM php:5.6.31-fpm-alpine
 
-WORKDIR /var/www
+WORKDIR /data/www
 
 ENV PHALCON_VERSION=3.2.1
 
