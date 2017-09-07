@@ -11,13 +11,19 @@ RUN set -xe && \
         tar xzf v${PHALCON_VERSION}.tar.gz && cd cphalcon-${PHALCON_VERSION}/build && sh install && \
         docker-php-ext-enable phalcon
 
-# add memcached extension
-ENV MEMCACHED_DEPS zlib-dev libmemcached-dev cyrus-sasl-dev
-RUN set -xe && \
-    apk add --no-cache libmemcached-libs zlib && \
-    apk add --no-cache --virtual .memcached-deps $MEMCACHED_DEPS && \
-    pecl install memcached-2.2.0 && \
-    docker-php-ext-enable memcached
+RUN pecl install igbinary && docker-php-ext-enable igbinary
+
+RUN apk update && apk add libmemcached-dev zlib-dev libgsasl-dev cyrus-sasl-dev \
+    && cd /tmp \
+    && pecl download memcached-2.2.0 \
+    && tar zxpf memcached-2.2.0.tgz \
+    && cd memcached-2.2.0 \
+    && phpize \
+    && ./configure --enable-memcached-igbinary --enable-memcached-json \
+    && make \
+    && make install \
+    && docker-php-ext-enable memcached \
+    && rm -rf /tmp/memcached-2.2.0*
 
 # add redis extension
 RUN set -xe && \
@@ -58,7 +64,22 @@ RUN apk upgrade --update && apk add \
     && git clone https://github.com/tideways/php-profiler-extension.git /usr/src/php/ext/tideways \
     && cd /usr/src/php/ext/tideways\
     && docker-php-ext-install tideways \
-    && rm -rf /var/cache/apk/* 
+    && rm -rf /var/cache/apk/*
 
-# add pdo_mysql extension
-RUN docker-php-ext-install pdo_mysql mysqli
+ #GD extension pdo_mysql extension
+RUN apk add --no-cache --virtual .build-deps \
+        libxml2-dev \
+        freetype-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
+        libmcrypt-dev \
+        libxml2
+
+RUN set -ex \
+    && docker-php-ext-configure gd \
+        --with-freetype-dir=/usr/include/freetype2/freetype \
+        --with-jpeg-dir=/usr/include \
+        --with-png-dir=/usr/include \
+    && docker-php-ext-install soap gd bcmath zip opcache pdo_mysql mysqli iconv mcrypt pdo pcntl sockets shmop xmlrpc \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/*

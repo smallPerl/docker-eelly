@@ -5,6 +5,8 @@ services:
         #image: mysql
         ports:
             - "3306:3306"
+        volumes:
+            - /Users/gary/docker/docker-eelly/data/mysql-data:/var/lib/mysql
         #new PDO("mysql:host=db;dbname=oauth;charset=utf8","root","123456");
         networks:
             app-network:
@@ -17,8 +19,8 @@ services:
     php5:
         build: ./php5-fpm
         volumes:
-            - /Users/haikun/site:/data/www
-            - /Users/haikun/docker/docker-eelly/logs:/data/logs
+            - /Users/gary/site:/data/www
+            - /Users/gary/docker/docker-eelly/logs:/data/logs
         links:
             - db
         networks:
@@ -26,9 +28,9 @@ services:
     php7:
         build: ./php7-fpm
         volumes:
-            - /Users/haikun/site:/data/www
-            - /Users/haikun/docker/docker-eelly/logs:/data/logs
-            - /Users/haikun/docker/docker-eelly/html:/data/www/html
+            - /Users/gary/site:/data/www
+            - /Users/gary/docker/docker-eelly/logs:/data/logs
+            - /Users/gary/docker/docker-eelly/html:/data/www/html
         links:
             - db
         networks:
@@ -42,17 +44,21 @@ services:
             - php5
             - php7
         volumes:
-            - /Users/haikun/site:/data/www
-            - /Users/haikun/docker/docker-eelly/logs:/data/logs
-            - /Users/haikun/docker/docker-eelly/html:/data/www/html
+            - /Users/gary/site:/data/www
+            - /Users/gary/docker/docker-eelly/logs:/data/logs
+            - /Users/gary/docker/docker-eelly/html:/data/www/html
         networks:
             app-network:
                 aliases:
                     - api.eelly.dev
                     - www.eelly.dev
                     - m.eelly.dev
+                    - static.eelly.dev
+                    - manage.eelly.dev
     redis:
         image: redis
+        ports:
+            - "6379:6379"
         networks:
             app-network:
     redisCommander:
@@ -93,8 +99,8 @@ services:
     node:
         build: ./nodejs
         volumes:
-             - /Users/haikun/docker/docker-eelly/html:/data/www/html
-             - /Users/haikun/site:/data/www
+             - /Users/gary/docker/docker-eelly/html:/data/www/html
+             - /Users/gary/site:/data/www
         networks:
             app-network:
 networks:
