@@ -66,9 +66,9 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
   && apk del .build-deps-yarn
 
-WORKDIR /data/www
-RUN chmod 777 /data/www/ -R
+WORKDIR /data/web
+RUN chmod 777 /data/web/ -R
 
 CMD [ "node" ]
 
-#RUN apk add  git && git clone http://phabricator.eelly.test/diffusion/27/oauth.git /data/www/oauth.eelly.dev
+#RUN apk add  git && git clone http://phabricator.eelly.test/diffusion/27/oauth.git /data/web/oauth.eelly.dev

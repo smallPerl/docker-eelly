@@ -1,6 +1,6 @@
 FROM php:7.1.7-fpm-alpine
 
-WORKDIR /data/www
+WORKDIR /data/web
 
 ENV PHALCON_VERSION=3.2.2
 
@@ -22,11 +22,20 @@ RUN set -xe && \
     docker-php-ext-enable mongodb
         
 #add redis
-RUN docker-php-source extract && \
-  apk add --update --no-cache autoconf g++ make && \
-  pecl install redis && \
-  docker-php-ext-enable redis && \
-  docker-php-source delete 
+
+RUN pecl install igbinary && docker-php-ext-enable igbinary
+ENV REDIS_VERSION=3.1.3
+RUN apk update && apk add libmemcached-dev zlib-dev libgsasl-dev cyrus-sasl-dev \
+    && cd /tmp \
+    && pecl download redis-${REDIS_VERSION} \
+    && tar zxvf redis-${REDIS_VERSION}.tgz \
+    && cd redis-${REDIS_VERSION} \
+    && phpize \
+    && ./configure --enable-redis-igbinary \
+    && make \
+    && make install \
+    && docker-php-ext-enable redis \
+    && rm -rf /tmp/reids-${REDIS_VERSION}*
 
 #add memcached
 RUN apk --update add wget \
@@ -35,7 +44,12 @@ RUN apk --update add wget \
   cyrus-sasl-dev\
   automake
 
-RUN pecl install memcached && docker-php-ext-enable memcached
+#RUN pecl install memcached && docker-php-ext-enable memcached
+RUN docker-php-source extract
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git && \
+  git clone --branch v3.0.3 https://github.com/php-memcached-dev/php-memcached.git /usr/src/php/ext/memcached/ \
+  && docker-php-ext-configure memcached --enable-memcached-igbinary  \
+  && docker-php-ext-install memcached
 
 #RUN pecl channel-update pecl.php.net && pecl install xdebug-2.5.5 && docker-php-ext-enable xdebug
 
@@ -79,8 +93,7 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git cmake openssl-dev 
 	&& apk del .build-deps && rm -rf /tmp/*
 
 ADD php.ini /usr/local/etc/php/
-RUN chmod 777 /data/www/ -R
-RUN pecl install igbinary && docker-php-ext-enable igbinary
+RUN chmod 777 /data/web/ -R
 
 # GD extension
 RUN apk add --no-cache --virtual .build-deps \
@@ -100,6 +113,9 @@ RUN set -ex \
     && rm -rf /var/cache/apk/* \
     && rm -rf /tmp/*
 
+#add http_proxy
+#ENV http_proxy http://172.18.108.20:1087
+#ENV https_proxy https://172.18.108.20:1087
 
 
 

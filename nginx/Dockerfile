@@ -6,7 +6,7 @@ RUN apk add --update nginx
 RUN rm -rf /var/cache/apk/* && rm -rf /tmp/*
 
 ADD nginx.conf /etc/nginx/
-ADD sites-available/*.conf /etc/nginx/sites-enabled/
+ADD vhost/*.conf /etc/nginx/vhost/
 ADD rewrite/*.conf /etc/nginx/rewrite/
 
 RUN echo "upstream php5-upstream { server php5:9000; }" > /etc/nginx/conf.d/php5upstream.conf

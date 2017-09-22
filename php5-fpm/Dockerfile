@@ -1,6 +1,6 @@
 FROM php:5.6.31-fpm-alpine
 
-WORKDIR /data/www
+WORKDIR /data/web
 
 ENV PHALCON_VERSION=3.2.1
 
@@ -11,9 +11,14 @@ RUN set -xe && \
         tar xzf v${PHALCON_VERSION}.tar.gz && cd cphalcon-${PHALCON_VERSION}/build && sh install && \
         docker-php-ext-enable phalcon
 
-RUN pecl install igbinary && docker-php-ext-enable igbinary
+# add memcached extension
+ENV MEMCACHED_DEPS zlib-dev libmemcached-dev cyrus-sasl-dev
+RUN set -xe && \
+    apk add --no-cache libmemcached-libs zlib && \
+    apk add --no-cache --virtual .memcached-deps $MEMCACHED_DEPS 
 
 # add memcached extension
+RUN pecl install igbinary && docker-php-ext-enable igbinary 
 RUN apk update && apk add libmemcached-dev zlib-dev libgsasl-dev cyrus-sasl-dev \
     && cd /tmp \
     && pecl download memcached-2.2.0 \
@@ -38,7 +43,7 @@ RUN set -xe && \
     docker-php-ext-enable mongodb
 
 ADD php.ini /usr/local/etc/php/
-RUN chmod 777 /data/www/ -R
+RUN chmod 777 /data/web/ -R
 
 ENV RABBITMQ_VERSION v0.8.0
 ENV PHP_AMQP_VERSION v1.9.0
@@ -65,7 +70,7 @@ RUN apk upgrade --update && apk add \
     && git clone https://github.com/tideways/php-profiler-extension.git /usr/src/php/ext/tideways \
     && cd /usr/src/php/ext/tideways\
     && docker-php-ext-install tideways \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/cache/apk/* 
 
  #GD extension pdo_mysql extension
 RUN apk add --no-cache --virtual .build-deps \
