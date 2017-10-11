@@ -1,0 +1,30 @@
+server {
+  listen    80;
+  listen    443 ssl http2;
+  server_name  api.eelly.dev;
+  index index.html index.php;
+#  root  /usr/share/nginx/html/test;
+  root /data/web/api.eelly.dev.git/public;
+
+  include server.ssl.conf;
+#  include server.safe.conf;
+#  include site.ip.conf;
+
+   location ~ \.php$ {
+    fastcgi_pass  php7:9001;
+    include fastcgi.conf;
+	fastcgi_index index.php;
+  }
+  
+  location ~ / {
+     expires  30d;     
+  }
+
+  location ~ .*\.(gif|jpg|jpeg|png|bmp|txt|js|css)$ {
+    expires      max;
+  }
+
+
+#  access_log  /var/log/nginx/test_access.log  www_access;
+  access_log   /data/logs/api_access.log  www_access;
+}
