@@ -1,5 +1,6 @@
 docker-eelly
 ==============
+**分支3.0： 是一套完整的php5+php7环境，各个扩展可独立拷贝安装，以扩展为块组成**
 
 修改docker-eelly/docker-compose.yml 文件的**volumes**路径
 
