@@ -35,6 +35,10 @@ RUN apk update && apk add libmemcached-dev zlib-dev libgsasl-dev cyrus-sasl-dev 
 RUN set -xe && \
     pecl install redis-3.1.3 &&\
     docker-php-ext-enable redis
+# add redis extension
+RUN set -xe && \
+    pecl install xhprof-0.9.4 &&\
+    docker-php-ext-enable xhprof
 
 # add mongodb extension
 RUN set -xe && \
@@ -72,7 +76,24 @@ RUN apk upgrade --update && apk add \
     && docker-php-ext-install tideways \
     && rm -rf /var/cache/apk/* 
 
- #GD extension pdo_mysql extension
+# add pdo_mysql extension
+RUN docker-php-ext-install pdo_mysql mysqli mysql bcmath
+
+#RUN docker-php-ext-install bcmath
+#RUN pecl install igbinary && docker-php-ext-enable igbinary
+#RUN docker-php-source extract
+#RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git && \
+#    git clone --branch 2.2.0 https://github.com/php-memcached-dev/php-memcached.git /usr/src/php/ext/memcached/ \
+#    && docker-php-ext-configure memcached --enable-memcached-igbinary  \
+#    && docker-php-ext-install memcached
+
+#add memcache extension
+RUN set -xe && \
+    apk add --no-cache --virtual .build-deps autoconf g++ make pcre-dev re2c && \
+    pecl install memcache-2.2.7 && \
+    docker-php-ext-enable memcache
+
+# extra extensions
 RUN apk add --no-cache --virtual .build-deps \
         libxml2-dev \
         freetype-dev \
@@ -86,6 +107,6 @@ RUN set -ex \
         --with-freetype-dir=/usr/include/freetype2/freetype \
         --with-jpeg-dir=/usr/include \
         --with-png-dir=/usr/include \
-    && docker-php-ext-install soap gd bcmath zip opcache pdo_mysql mysqli iconv mcrypt pdo pcntl sockets shmop xmlrpc \
+    && docker-php-ext-install soap gd zip opcache iconv mcrypt pdo pcntl sockets shmop xmlrpc \
     && rm -rf /var/cache/apk/* \
     && rm -rf /tmp/*

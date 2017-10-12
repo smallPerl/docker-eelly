@@ -2,7 +2,6 @@ version: '3'
 services:
     db:
         build: ./mysql
-        #image: mysql
         ports:
             - "3306:3306"
         volumes:
@@ -17,10 +16,10 @@ services:
         networks:
             app-network:
     php5:
-        build: ./php5-fpm
+        build: ./others/php5-fpm
         volumes:
             - /Users/gary/site:/data/web
-            - ./logs:/data/logs
+            - ./data/logs:/data/logs
         links:
             - db
         networks:
@@ -29,8 +28,8 @@ services:
         build: ./php7-fpm
         volumes:
             - /Users/gary/site:/data/web
-            - ./logs:/data/logs
-            - ./html:/data/web/html
+            - ./data/logs:/data/logs
+            - ./data/html:/data/web/html
         links:
             - db
         networks:
@@ -45,8 +44,8 @@ services:
             - php7
         volumes:
             - /Users/gary/site:/data/web
-            - ./logs:/data/logs
-            - ./html:/data/web/html
+            - ./data/logs:/data/logs
+            - ./data/html:/data/web/html
         networks:
             app-network:
                 aliases:
@@ -54,12 +53,10 @@ services:
                     - www.eelly.dev
                     - m.eelly.dev
                     - oauth.eelly.dev
-                    - static.eelly.dev
-                    - manage.eelly.dev
     redis:
         image: redis
         ports:
-            - "6379:6379"
+          - "6379:6379"
         networks:
             app-network:
     redisCommander:
@@ -98,21 +95,25 @@ services:
         networks:
             app-network:
     node:
-        build: ./nodejs
+        build: ./others/nodejs
         volumes:
-             - ./html:/data/web/html
+             - ./data/html:/data/web/html
              - /Users/gary/site:/data/web
         networks:
             app-network:
     hugo:
-        #build: ./others/hugo
         image: andthensome/alpine-hugo-git-bash
         volumes:
              - /Users/gary/site:/data/web
-        #command: hugo server -d
-        ports:
-            - "1313:1313"
         networks:
             app-network:    
+    python:
+        build: ./others/python
+        volumes:
+             - ./data/html:/data/web/html
+             - /Users/gary/site:/data/web
+        networks:
+            app-network:   
+        
 networks:
     app-network:
