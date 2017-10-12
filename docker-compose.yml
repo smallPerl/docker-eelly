@@ -53,6 +53,7 @@ services:
                     - www.eelly.dev
                     - m.eelly.dev
                     - oauth.eelly.dev
+                    - uc.eelly.dev
     redis:
         image: redis
         ports:
